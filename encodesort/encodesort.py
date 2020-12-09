@@ -56,7 +56,8 @@ def encode(carrier, bits):
         bigguns.append(big)
 
         # the inserts are relative, to achieve the effect of a series of contiguous, sparse arrays laid atop one another
-        # the order of the inserts is small (low array size) to large
+        # the order of the inserts is small (low array size) to large, letting the later inserts reassign the earliers'
+        # indices
         small = to_encode - big
         idx.insert(small, carrier[array_size - i - 1])
 
