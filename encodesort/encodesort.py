@@ -29,30 +29,38 @@ def _to_bytes(decoded, sz):
         return bs.tobytes()
 
 
-def encode(carrier, bits):
-    cap = len(carrier)
-    bit_size = math.log2(cap)
-    assert(bit_size.is_integer())
-    desired_bitlen = cap // 2  # this isn't right, I think
-    assert(len(bits) <= desired_bitlen)
+def capacity(array_size):
+    halfway = array_size // 2
+    bit_size = int(math.log2(array_size))
+    return (halfway * bit_size) // 8
 
-    padded_bits = bits + (b'\0' * (desired_bitlen - len(bits)))
+
+def encode(carrier, bits):
+    array_size = len(carrier)
+    bit_size = math.log2(array_size)
+    assert(bit_size.is_integer())
+    halfway = array_size // 2
+
+    cap = capacity(array_size)
+    assert(len(bits) <= cap)
+
+    padded_bits = bits + (b'\0' * (cap - len(bits)))
 
     idx = []
     bigguns = []
     for i, b in enumerate(iterate_bits(padded_bits, int(bit_size))):
-        if i >= desired_bitlen:
+        if i >= halfway:
             break
         to_encode = int(b)
-        big = min(cap - i - 1, to_encode)
+        big = min(array_size - i - 1, to_encode)
         bigguns.append(big)
 
         # the inserts are relative, to achieve the effect of a series of contiguous, sparse arrays laid atop one another
         # the order of the inserts is small (low array size) to large
         small = to_encode - big
-        idx.insert(small, carrier[cap - i - 1])
+        idx.insert(small, carrier[array_size - i - 1])
 
-    for i in range(desired_bitlen-1, -1, -1):
+    for i in range(halfway-1, -1, -1):
         idx.insert(bigguns[i], carrier[i])
 
     return idx

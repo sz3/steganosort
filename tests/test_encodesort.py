@@ -59,11 +59,15 @@ class EncodeSortTest(TestCase):
             64: 24,
             128: 56,
             256: 128,
+            512: 288,
+            1024: 640,
+            2048: 1408,
+            4096: 3072,
         }
         for envelope_size, payload_size in bits.items():
             carrier = list(range(envelope_size))
 
-            data = b'fooooobar'
+            data = data = os.urandom(payload_size)
             res = encode(carrier, data)
             res = decode(res)
 
