@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from encodesort.encodesort import encode, decode
+from steganosort.steganosort import encode, decode
 
 
 def _pad(data, length):
@@ -9,7 +9,7 @@ def _pad(data, length):
     return data + pad
 
 
-class EncodeSortTest(TestCase):
+class SteganosortTest(TestCase):
     def test_encode_decode(self):
         carrier = list(range(256))
 

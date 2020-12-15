@@ -1,5 +1,5 @@
 
-from .encodesort import encode, decode
+from .steganosort import encode, decode
 
 
 def dict_encode(d, bits):
