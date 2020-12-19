@@ -2,7 +2,7 @@ import sys
 from json import dumps
 
 from flask import Flask
-from steganosort.examples import dict_encode
+from steganosort.util import dict_encode
 
 
 app = Flask(__name__, static_url_path='')

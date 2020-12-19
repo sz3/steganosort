@@ -1,6 +1,6 @@
 import requests
 
-from steganosort.examples import dict_decode
+from steganosort.util import dict_decode
 
 
 def main(server):
