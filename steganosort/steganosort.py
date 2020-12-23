@@ -1,6 +1,11 @@
 import math
 
 
+class PayloadTooLargeException(Exception):
+    def __init__(self, bits, cap):
+        super().__init__(f"{len(bits)} is larger than capacity {cap}")
+
+
 def _get_power_of_2(n):
     return math.log2(n)
 
@@ -42,7 +47,8 @@ def encode(carrier, bits):
     halfway = array_size // 2
 
     cap = capacity(array_size)
-    assert(len(bits) <= cap)
+    if len(bits) > cap:
+        raise PayloadTooLargeException(bits, cap)
 
     padded_bits = bits + (b'\0' * (cap - len(bits)))
 
@@ -89,7 +95,7 @@ def decode(encoded):
 
 def main():
     carrier = list(range(256))
-    bits = b'heliowarbd'
+    bits = b'helloworld'
     es = encode(carrier, bits)
     print(es)
 
