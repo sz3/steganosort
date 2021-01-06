@@ -38,23 +38,21 @@ class SteganosortTest(TestCase):
         self.assertEqual(10, len(res))
         self.assertEqual(_pad(data, len(res)), res)
 
-    def test_encode_decode_tiny_bit_lengths(self):
-        bits = {
-            # 8: 2,
-            16: 4,
-        }
-        for envelope_size, payload_size in bits.items():
-            carrier = list(range(envelope_size))
+    def test_encode_decode_3_bits(self):
+        # this is the smallest size, and only encodes 1 byte
+        # we could squeeze out a few more bits if we wanted to.
+        carrier = list(range(8))
 
-            data = b'fo'
-            res = encode(carrier, data)
-            res = decode(res)
+        data = b'f'
+        res = encode(carrier, data)
+        res = decode(res)
 
-            self.assertEqual(payload_size, len(res))
-            self.assertEqual(_pad(data, payload_size), res)
+        self.assertEqual(1, len(res))
+        self.assertEqual(b'f', res)
 
     def test_encode_decode_various_bit_lengths(self):
         bits = {
+            16: 4,
             32: 10,
             64: 24,
             128: 56,
@@ -67,7 +65,7 @@ class SteganosortTest(TestCase):
         for envelope_size, payload_size in bits.items():
             carrier = list(range(envelope_size))
 
-            data = data = os.urandom(payload_size)
+            data = os.urandom(payload_size)
             res = encode(carrier, data)
             res = decode(res)
 

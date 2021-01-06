@@ -47,6 +47,8 @@ def encode(carrier, bits):
     halfway = array_size // 2
 
     cap = capacity(array_size)
+    if array_size == 8:  # special case for 8 -- doesn't divide into a byte
+        cap = 2
     if len(bits) > cap:
         raise PayloadTooLargeException(bits, cap)
 
@@ -77,7 +79,7 @@ def decode(encoded):
     carrier = sorted(encoded)
     bit_size = int(math.log2(len(encoded)))
 
-    decoded_count = len(encoded) // 2
+    decoded_count = len(carrier) // 2
     decoded = [0] * decoded_count
 
     for i in range(decoded_count):
@@ -90,7 +92,7 @@ def decode(encoded):
         encoded.pop(index)
         decoded[decoded_count - i - 1] += index
 
-    return _to_bytes(decoded, bit_size)
+    return _to_bytes(decoded, bit_size)[:capacity(len(carrier))]
 
 
 def main():
