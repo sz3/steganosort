@@ -39,16 +39,18 @@ class SteganosortTest(TestCase):
         self.assertEqual(_pad(data, len(res)), res)
 
     def test_encode_decode_3_bits(self):
-        # this is the smallest size, and only encodes 1 byte
-        # we could squeeze out a few more bits if we wanted to.
+        # this is the smallest size, and only encodes ~12 bits.
+        # the lower bits of the second byte will not make the trip
         carrier = list(range(8))
 
-        data = b'f'
-        res = encode(carrier, data)
-        res = decode(res)
-
-        self.assertEqual(1, len(res))
-        self.assertEqual(b'f', res)
+        trials = {
+            b'ao': b'a`',
+            b'oO': b'o@',
+        }
+        for i, o in trials.items():
+            res = encode(carrier, i)
+            res = decode(res)
+            self.assertEqual(o, res)
 
     def test_encode_decode_various_bit_lengths(self):
         bits = {

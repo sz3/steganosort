@@ -92,7 +92,7 @@ def decode(encoded):
         encoded.pop(index)
         decoded[decoded_count - i - 1] += index
 
-    return _to_bytes(decoded, bit_size)[:capacity(len(carrier))]
+    return _to_bytes(decoded, bit_size)
 
 
 def main():
