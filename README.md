@@ -25,6 +25,13 @@ python setup.py install
 ```
 from steganosort import encode, decode
 x = list(range(64))
-y = encode(x, b'helloworld')
+y = encode(x, b'hello world!')
+y
 decode(y)
+```
+
+Expected output:
+```
+[16, 17, 18, 19, 20, 21, 1, 5, 13, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 14, 32, 33, 2, 34, 35, 36, 0, 37, 38, 39, 4, 40, 12, 41, 8, 42, 43, 7, 44, 45, 46, 47, 48, 15, 49, 50, 51, 3, 52, 54, 55, 56, 58, 59, 60, 57, 61, 53, 11, 62, 63, 10, 9, 6]
+b'hello world!\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 ```
