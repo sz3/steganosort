@@ -43,15 +43,16 @@ This approach can only order *unique* elements -- so arrays or lists with duplic
 However, most key:value data types, such as python's `dict`, or the javascript/json `object`, already enforce unique keys. This means you can encode data in the sort order -- for example -- a json object returned over http.
 
 There is a very basic http server/client example in the `examples/` subdirectory. The server requires the python `flask` package.
+
+To run the server on port 8000:
 ```
 python -m examples.server
 ```
-(to run the server on port 8000)
 
+To make an http request against the server, discard the response body, and print the message encoded in the sort order:
 ```
 python -m examples.client
 ```
-(to make an http request against the server, discard the response body, and print the message encoded in the sort order)
 
 Expected client output:
 ```
