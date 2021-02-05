@@ -8,10 +8,15 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='steganosort',
-    license='GPL',
+    license='GPLv3',
     url='https://github.com/sz3/steganosort',
     version='0.1',
 
+    entry_points={
+        'console_scripts': [
+            'steganosort = steganosort:main',
+        ],
+    },
     packages=find_packages(exclude=('tests', 'examples')),
 
     python_requires='>=3.6',
