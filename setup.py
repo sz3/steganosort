@@ -24,7 +24,7 @@ setup(
         'bitstring>=3.1',
     ],
 
-    description='Embed messages in the sort order of lists/dicts',
+    description='Embed messages in the sort order of lists/dicts/JSON.',
     long_description=long_description,
     long_description_content_type='text/markdown',
 

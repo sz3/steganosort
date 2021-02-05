@@ -7,7 +7,7 @@
 
 The ordering of an "unordered" list is an information channel.
 
-This library demonstrates how to embed data in the sort order of a python list or (>=3.6) dictionary.
+This library demonstrates how to embed data in the sort order of python (>=3.6) lists, dictionaries, and JSON.
 
 Based on https://github.com/CalderWhite/gif-msg.
 
@@ -41,7 +41,7 @@ Expected output:
 
 ## Constraints, and more interesting usage
 
-This approach can only order *unique* elements -- so arrays or lists with duplicate elements gain no additionally payload capacity from those duplicate elements.
+This approach can only order *unique* elements -- so arrays or lists with duplicate elements gain no additional payload capacity from those duplicate elements.
 
 However, most key:value data types, such as python's `dict`, or the javascript/json `object`, already enforce unique keys. This means you can encode data in the sort order -- for example -- a json object returned over http.
 
