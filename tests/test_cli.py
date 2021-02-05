@@ -63,9 +63,7 @@ class CliTest(TestCase):
 
         # validate json is the "same"
         with open(dst_path, 'rb') as fo:
-            res = json.load(fo)
-            res = {k: res[k] for k in sorted(res)}
-            self.assertDictEqual(SAMPLE_JSON, res)
+            self.assertDictEqual(SAMPLE_JSON, json.load(fo))
 
         # validate decode
         decode_path = path.join(self.tempdir.name, 'decoded')
