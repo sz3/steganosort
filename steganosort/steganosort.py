@@ -94,13 +94,3 @@ def decode(encoded):
 
     return _to_bytes(decoded, bit_size)
 
-
-def main():
-    carrier = list(range(256))
-    bits = b'helloworld'
-    es = encode(carrier, bits)
-    print(es)
-
-
-if __name__ == '__main__':
-    main()

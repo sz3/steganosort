@@ -1,9 +1,11 @@
 import json
+from io import StringIO
 from os import path
 from tempfile import TemporaryDirectory
 from unittest import TestCase
+from unittest.mock import patch
 
-from steganosort.cli import enc, dec
+from steganosort.cli import enc, dec, main
 
 
 SAMPLE_JSON = {
@@ -72,3 +74,50 @@ class CliTest(TestCase):
 
         with open(decode_path, 'rb') as fdec:
             self.assertEqual(b'hello!\x00\x00\x00\x00', fdec.read())
+
+    def test_main(self):
+        # encode
+        with patch("steganosort.cli.sys") as mock_sys:
+            mock_sys.stdin = StringIO(json.dumps(SAMPLE_JSON))
+            mock_sys.stdout = StringIO()
+            main(['steg', 'greetings!'])
+
+            mock_sys.stdout.seek(0)
+            encoded = mock_sys.stdout.read()
+            self.assertDictEqual(SAMPLE_JSON, json.loads(encoded))
+
+        # decode
+        with patch("steganosort.cli.sys") as mock_sys:
+            mock_sys.stdin = StringIO(encoded)
+            mock_sys.stdout = StringIO()
+            main(['steg'])
+
+            mock_sys.stdout.seek(0)
+            msg = mock_sys.stdout.read()
+            self.assertEqual('greetings!', msg)
+
+
+    def test_main_msg_from_file(self):
+        src_path = path.join(self.tempdir.name, 'msgfile')
+        with open(src_path, 'wt') as fi:
+            fi.write('0123456789')
+
+        # encode
+        with patch("steganosort.cli.sys") as mock_sys:
+            mock_sys.stdin = StringIO(json.dumps(SAMPLE_JSON))
+            mock_sys.stdout = StringIO()
+            main(['steg', f'@{src_path}'])
+
+            mock_sys.stdout.seek(0)
+            encoded = mock_sys.stdout.read()
+            self.assertDictEqual(SAMPLE_JSON, json.loads(encoded))
+
+        # decode
+        with patch("steganosort.cli.sys") as mock_sys:
+            mock_sys.stdin = StringIO(encoded)
+            mock_sys.stdout = StringIO()
+            main(['steg'])
+
+            mock_sys.stdout.seek(0)
+            msg = mock_sys.stdout.read()
+            self.assertEqual('0123456789', msg)
