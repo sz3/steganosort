@@ -78,8 +78,9 @@ def encode(carrier, bits):
     return idx
 
 
-def decode(encoded):
-    carrier = sorted(encoded)
+def decode(encoded, sort_fun=None):
+    sort_fun = sort_fun or sorted
+    carrier = sort_fun(encoded)
     bit_size = int(math.log2(len(encoded)))
 
     decoded_count = len(carrier) // 2

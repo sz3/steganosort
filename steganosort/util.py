@@ -6,27 +6,28 @@ def _floor_pow_2(x):
     return 2**(x.bit_length() - 1)
 
 
-def encode(o, bits):
+def encode(o, bits, sort_fun=None):
     if isinstance(o, dict):
-        return dict_encode(o, bits)
+        return dict_encode(o, bits, sort_fun)
     else:
-        return list_encode(o, bits)
+        return list_encode(o, bits, sort_fun)
 
 
-def decode(o):
+def decode(o, sort_fun=None):
     if isinstance(o, dict):
-        return dict_decode(o)
+        return dict_decode(o, sort_fun)
     else:
-        return list_decode(o)
+        return list_decode(o, sort_fun)
 
 
-def list_encode(l, bits):
+def list_encode(l, bits, sort_fun=None):
     '''
     unlike the base `encode` and `decode`, the `list_??codes` can handle:
         * non-sorted input lists
         * non-power-of-two array sizes
         * duplicate elements
     '''
+    sort_fun = sort_fun or sorted
     viable = set()
     extra = []
     for elem in l:
@@ -35,7 +36,7 @@ def list_encode(l, bits):
         else:
             extra.append(elem)
 
-    viable = sorted(viable)
+    viable = sort_fun(viable)
     capacity = _floor_pow_2(len(viable))
     extra += viable[capacity:]
     viable = viable[:capacity]
@@ -44,23 +45,24 @@ def list_encode(l, bits):
     return res + extra
 
 
-def list_decode(l):
+def list_decode(l, sort_fun=None):
     '''
     unlike the base `encode` and `decode`, the `smart_??codes` can handle:
         * non-power-of-two array sizes
         * duplicate elements
     '''
     capacity = _floor_pow_2(len(set(l)))
-    return base_decode(l[:capacity])
+    return base_decode(l[:capacity], sort_fun)
 
 
-def dict_encode(d, bits):
-    d = {k: d[k] for k in sorted(d)}
+def dict_encode(d, bits, sort_fun=None):
+    sort_fun = sort_fun or sorted
+    d = {k: d[k] for k in sort_fun(d)}
 
-    indices = list(sorted(d))
-    indices = list_encode(list(d.keys()), bits)
+    indices = list(d.keys())
+    indices = list_encode(indices, bits)
     return {k: d[k] for k in indices}
 
 
-def dict_decode(d):
-    return list_decode(list(d.keys()))
+def dict_decode(d, sort_fun=None):
+    return list_decode(list(d.keys()), sort_fun)

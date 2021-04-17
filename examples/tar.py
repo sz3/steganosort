@@ -2,13 +2,17 @@ import gzip
 import sys
 import tarfile
 from os import scandir, makedirs
-from os.path import isdir
+from os.path import isdir, splitext
 
 from steganosort.util import list_encode, list_decode
 
 
-def tgz_sort():
-    pass
+def tar_sort(files):
+    # top level sort by file type (extension)
+    # sort by pathname for each file type
+    files = sorted(files)
+    files = sorted(files, key=lambda k: splitext(k)[1])
+    return files
 
 
 def _enumerate_files(*files):
@@ -26,7 +30,7 @@ def pack(stdin, tarpath, *files, **kwargs):
     compress = kwargs.get('compress', True)
     f = gzip.GzipFile(tarpath, 'wb') if compress else open(tarpath, 'wb')
     with f, tarfile.TarFile(mode='w', fileobj=f) as tar:
-        for infile in list_encode(files, stdin.read()):
+        for infile in list_encode(files, stdin.read(), tar_sort):
             tar.add(infile)
 
 
@@ -35,7 +39,7 @@ def extract(stdout, tarpath, target_dir, **kwargs):
     f = gzip.GzipFile(tarpath, 'rb') if compress else open(tarpath, 'rb')
     with f, tarfile.TarFile(mode='r', fileobj=f) as tar:
         file_list = tar.getnames()
-        stdout.write(list_decode(file_list).decode('utf-8'))
+        stdout.write(list_decode(file_list, tar_sort).decode('utf-8'))
 
         makedirs(target_dir, exist_ok=True)
         tar.extractall(target_dir)
