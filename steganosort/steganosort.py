@@ -41,6 +41,9 @@ def capacity(array_size):
 
 
 def encode(carrier, bits):
+    if isinstance(bits, str):
+       bits = bits.encode('utf-8')
+
     array_size = len(carrier)
     bit_size = math.log2(array_size)
     assert(bit_size.is_integer())

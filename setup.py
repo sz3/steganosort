@@ -17,7 +17,7 @@ setup(
             'steganosort = steganosort:main',
         ],
     },
-    packages=find_packages(exclude=('tests', 'examples')),
+    packages=find_packages(exclude=('tests',)),
 
     python_requires='>=3.6',
     install_requires=[
