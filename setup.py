@@ -24,12 +24,12 @@ setup(
         'bitstring>=3.1',
     ],
 
-    description='Embed messages in the sort order of lists/dicts/JSON.',
+    description='Embed messages in the sort order of lists/dicts/JSON/tar.',
     long_description=long_description,
     long_description_content_type='text/markdown',
 
     author="Stephen Zimmerman",
-    author_email="sz@galacticicecube.com",
+    author_email="sz@recv.cc",
 
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
@@ -37,5 +37,7 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
 )
