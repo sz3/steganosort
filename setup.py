@@ -10,7 +10,7 @@ setup(
     name='steganosort',
     license='GPLv3',
     url='https://github.com/sz3/steganosort',
-    version='0.1',
+    version='0.1.0',
 
     entry_points={
         'console_scripts': [

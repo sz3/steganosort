@@ -1,20 +1,7 @@
-import argparse
 import json
 import sys
-from argparse import RawTextHelpFormatter
 
 from .util import encode, decode
-
-
-USAGE='''
-Examples:
-    cat lines.txt | steganosort "message" > encoded.txt
-    cat lines.txt | steganosort @msg.txt > encoded.txt
-    cat json.txt | steganosort "message" --json > encodedjson.txt
-    cat json.txt | steganosort @msg.txt --json > encodedjson.txt
-    cat encoded.txt | steganosort > decodedmsg.txt
-    cat encodedjson.txt | steganosort > decodedmsg.txt
-'''
 
 
 def enc_json(src, dst, msg):
@@ -41,16 +28,8 @@ def dec_lines(src, dst):
     dst.write(res.decode('utf-8'))
 
 
-def main(args):
-    parser = argparse.ArgumentParser('steganosort',
-                                     description='Embed messages in the sort order.',
-                                     epilog=USAGE,
-                                     formatter_class=RawTextHelpFormatter)
-    parser.add_argument('message', nargs='?', default=None)
-    parser.add_argument('--json',  action='store_true')
-    args = parser.parse_args()
-
-    msg = args.message
+def main(**kwargs):
+    msg = kwargs.get('message')
     if not msg:
         pass
     elif msg.startswith('@'):
@@ -60,7 +39,7 @@ def main(args):
         msg = bytes(msg, 'utf-8')
 
     mode = 'newlines'
-    if args.json:
+    if kwargs.get('json'):
         mode = 'json'
 
     enc = {

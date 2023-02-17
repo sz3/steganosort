@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 from unittest import TestCase
 from unittest.mock import patch
 
-from steganosort.cli import enc, dec, main
+from steganosort.cli import enc_json, dec_json, main
 
 
 SAMPLE_JSON = {
@@ -61,7 +61,7 @@ class CliTest(TestCase):
 
         dst_path = path.join(self.tempdir.name, 'outfile')
         with open(src_path, 'rb') as fi, open(dst_path, 'wt') as fo:
-            enc(fi, fo, b'hello!')
+            enc_json(fi, fo, b'hello!')
 
         # validate json is the "same"
         with open(dst_path, 'rb') as fo:
@@ -70,17 +70,42 @@ class CliTest(TestCase):
         # validate decode
         decode_path = path.join(self.tempdir.name, 'decoded')
         with open(dst_path, 'rb') as fo, open(decode_path, 'wt') as fdec:
-            dec(fo, fdec)
+            dec_json(fo, fdec)
 
         with open(decode_path, 'rb') as fdec:
             self.assertEqual(b'hello!\x00\x00\x00\x00', fdec.read())
 
     def test_main(self):
+        sample = list(range(0,32))
+
+        # encode
+        with patch("steganosort.cli.sys") as mock_sys:
+            mock_sys.stdin = StringIO('\n'.join([f'{i}' for i in sample]) + '\n')
+            mock_sys.stdout = StringIO()
+            main(message='greetings!')
+
+            mock_sys.stdout.seek(0)
+            encoded = mock_sys.stdout.read()
+            asints = [int(i) for i in encoded.strip().split('\n')]
+            sorted_out = sorted(asints)
+            self.assertEqual(sample, sorted_out)
+
+        # decode
+        with patch("steganosort.cli.sys") as mock_sys:
+            mock_sys.stdin = StringIO(encoded)
+            mock_sys.stdout = StringIO()
+            main()
+
+            mock_sys.stdout.seek(0)
+            msg = mock_sys.stdout.read()
+            self.assertEqual('greetings!', msg)
+
+    def test_main_json(self):
         # encode
         with patch("steganosort.cli.sys") as mock_sys:
             mock_sys.stdin = StringIO(json.dumps(SAMPLE_JSON))
             mock_sys.stdout = StringIO()
-            main(['steg', 'greetings!'])
+            main(message='greetings!', json=True)
 
             mock_sys.stdout.seek(0)
             encoded = mock_sys.stdout.read()
@@ -90,7 +115,7 @@ class CliTest(TestCase):
         with patch("steganosort.cli.sys") as mock_sys:
             mock_sys.stdin = StringIO(encoded)
             mock_sys.stdout = StringIO()
-            main(['steg'])
+            main(json=True)
 
             mock_sys.stdout.seek(0)
             msg = mock_sys.stdout.read()
@@ -106,7 +131,7 @@ class CliTest(TestCase):
         with patch("steganosort.cli.sys") as mock_sys:
             mock_sys.stdin = StringIO(json.dumps(SAMPLE_JSON))
             mock_sys.stdout = StringIO()
-            main(['steg', f'@{src_path}'])
+            main(message=f'@{src_path}', json=True)
 
             mock_sys.stdout.seek(0)
             encoded = mock_sys.stdout.read()
@@ -116,7 +141,7 @@ class CliTest(TestCase):
         with patch("steganosort.cli.sys") as mock_sys:
             mock_sys.stdin = StringIO(encoded)
             mock_sys.stdout = StringIO()
-            main(['steg'])
+            main(json=True)
 
             mock_sys.stdout.seek(0)
             msg = mock_sys.stdout.read()
